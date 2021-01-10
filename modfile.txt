@@ -2,6 +2,7 @@
 Import "config.lua"
 Import "event_list.lua"
 Import "twitch.lua"
+Import "scripts.lua"
 To "Game/Text/en/HelpText.en.sjson"
 SJSON "helptext.en.sjson"
 To "Game/Text/fr/HelpText.fr.sjson"
