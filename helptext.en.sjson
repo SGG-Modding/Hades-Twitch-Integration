@@ -13,5 +13,153 @@
       Id = "TwitchIntegration_NextVoteTimer"
       DisplayName = "Next vote starts in : {$TempTextData.Time}"
     }
+    {
+      Id = "TwitchIntegration_"
+      DisplayName = ""
+    }
+    {
+      Id = "TwitchIntegration_PLAYER_HEAL"
+      DisplayName = "Heal Zagreus"
+    }
+    {
+      Id = "TwitchIntegration_PLAYER_DAMAGE"
+      DisplayName = "Damage Zagreus"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_CENTAUR"
+      DisplayName = "Spawn Centaur Heart"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_HAMMER"
+      DisplayName = "Spawn Hammer"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_POM"
+      DisplayName = "Spawn Pom"
+    }
+    {
+      Id = "TwitchIntegration_REMOVE_RANDOM_BOON"
+      DisplayName = "Remove a boon"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_RANDOM_BOON"
+      DisplayName = "Spawn a boon"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_RANDOM_ENEMIES"
+      DisplayName = "Spawn enemies"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_MONEY"
+      DisplayName = "Give money"
+    }
+    {
+      Id = "TwitchIntegration_REMOVE_MONEY"
+      DisplayName = "Remove money"
+    }
+    {
+      Id = "TwitchIntegration_EMPTY_SUPER_METER"
+      DisplayName = "Drain Aid meter"
+    }
+    {
+      Id = "TwitchIntegration_FILL_SUPER_METER"
+      DisplayName = "Fill Aid meter"
+    }
+    {
+      Id = "TwitchIntegration_DISABLE_DASH"
+      DisplayName = "Disable dash"
+    }
+    {
+      Id = "TwitchIntegration_ROOM_WIPE"
+      DisplayName = "Kill all enemies"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_DARKNESS"
+      DisplayName = "Give darkness"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_NECTAR"
+      DisplayName = "Give nectar"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_KEY"
+      DisplayName = "Give key"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_BLOOD"
+      DisplayName = "Give titan blood"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_GEMS"
+      DisplayName = "Give gems"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_DIAMOND"
+      DisplayName = "Give diamond"
+    }
+    {
+      Id = "TwitchIntegration_CHARM_ALL_ENEMIES"
+      DisplayName = "Charm all enemies"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_MINI_CHARIOTS"
+      DisplayName = "Spawn mini chariots"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_PESTS"
+      DisplayName = "Spawn pests"
+    }
+    {
+      Id = "TwitchIntegration_SPAWN_CHAOS_BOON"
+      DisplayName = "Spawn Chaos boon"
+    }
+    {
+      Id = "TwitchIntegration_HIDE_UI"
+      DisplayName = "Hide interface"
+    }
+    {
+      Id = "TwitchIntegration_GIVE_TEMP_RARITY_BOOST"
+      DisplayName = "Next boon rarity increased"
+    }
+    {
+      Id = "TwitchIntegration_FORCE_CHAOS_GATE"
+      DisplayName = "Force Chaos gate"
+    }
+    {
+      Id = "TwitchIntegration_FORCE_TROVE"
+      DisplayName = "Force infernal trove"
+    }
+    {
+      Id = "TwitchIntegration_FORCE_FISH"
+      DisplayName = "Force fishing point"
+    }
+    {
+      Id = "TwitchIntegration_ADD_DEFIANCE"
+      DisplayName = "Give Death Defiance"
+    }
+    {
+      Id = "TwitchIntegration_BOSS_MINELAYER"
+      DisplayName = "Minelayer boss battle"
+    }
+    {
+      Id = "TwitchIntegration_BOSS_RAT_THUG"
+      DisplayName = "Rat thug boss battle"
+    }
+    {
+      Id = "TwitchIntegration_BOSS_HELPING_HANDS"
+      DisplayName = "Hands boss battle"
+    }
+    {
+      Id = "TwitchIntegration_"
+      DisplayName = ""
+    }
+    {
+      Id = "TwitchIntegration_"
+      DisplayName = ""
+    }
+    {
+      Id = "TwitchIntegration_"
+      DisplayName = ""
+    }
     ]
 }
