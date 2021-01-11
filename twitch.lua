@@ -84,82 +84,52 @@ function OpenVotingWindow()
 	local rowoffset = 0
 	local columnoffset = 0
 
-	-- Provisional UI Scaling BEGIN
-
-	--[[ outputs
-		- backgroundX
-		- backgroundY
-		- backgroundScale
-		- backgroundScaleX
-		- backgroundScaleY
-		- choiceWidth
-		- choiceHeight
-		- choiceFontSize
-		- rowoffset
-		- columnoffset
-		- timerX
-		- timerY
-		- timerScale
-		- timerScaleX
-		- timerScaleY
-		- timerWidth
-		- timerHeight
-		- timerFontSize
-	]]
-
-	local s = TwitchIntegrationConfig.UISize or 1
-
-	local frameWidth = 1818
-	local frameWidthScale = 1
-	local frameHeight = 335
-	local frameHeightScale = 1
-	local frameWidthMax = 1818
-	local timerHeight = 110
-	local timerWidth = 180
-	local marginX = 5
-	local marginY = 5
-	local offsetWidthScale = 1
-	local offsetHeightScale = 1
-
-	local backgroundXCenter = ScreenCenterX + 230 + frameWidth/2
-	local backgroundYCenter = ScreenCenterY + 480 + frameHeight/2
-
-	local scaleContactsAt = frameWidthMax/frameWidthScale
-	local widthScale = math.min( s, scaleContactsAt )
-	local heightScale = math.max( s, scaleContactsAt ) + s - scaleContactsAt
-
-	timerFontSize = 20 * widthScale
-	choiceFontSize = 15 * widthScale
-
-	rowoffset = 30 * widthScale * offsetWidthScale
-	columnoffset = 240 * heightScale * offsetHeightScale
-
-	local backgroundWidth = frameWidth * widthScale
-	local backgroundHeight =  frameHeight * heightScale
-
-	backgroundX = backgroundXCenter - backgroundWidth/2
-	backgroundY = backgroundYCenter - backgroundHeight/2
-
-	rowStartX = backgroundX + marginX
-	rowStartY = backgroundY + marginY
-
-	local choiceWidth = 150 * ( backgroundWidth - 2*marginX + rowoffset ) / 3 - rowoffset
-	local choiceHeight = 80 * ( backgroundHeight - 2*marginY + columnoffset ) / 2 - columnoffset
-
-	timerY = (timerHeight + frameHeight) * heightScale
-	timerX = (timerWidth + frameWidth) * widthScale
-
-	backgroundScale = 0.8
-	backgroundScaleX = 1.0 * widthScale
-	backgroundScaleY = 0.9 * heightScale
-
-	local timerScale = timerWidth/frameWidth
-	local timerScaleX = backgroundScaleX
-	local timerScaleY = backgroundScaleY
-
-	numperrow = 3
-
-	-- Provisional UI Scaling END
+	if TwitchIntegrationConfig.UISize == 1 then
+		timerFontSize = 20
+		choiceFontSize = 15
+		backgroundX = ScreenCenterX + 230
+		backgroundY = ScreenCenterY + 480
+		backgroundScale = 0.8
+		backgroundScaleX = 1.0
+		backgroundScaleY = 0.9
+		numperrow = 3
+		timerX = 90
+		timerY = 445
+		rowStartX = -110
+		rowStartY = 480
+		rowoffset = 30
+		columnoffset = 240
+	elseif TwitchIntegrationConfig.UISize == 2 then
+		timerFontSize = 25
+		choiceFontSize = 20
+		backgroundX = ScreenCenterX + 230
+		backgroundY = ScreenCenterY + 480
+		backgroundScale = 0.8
+		backgroundScaleX = 1.4
+		backgroundScaleY = 0.9
+		numperrow = 3
+		timerX = 90
+		timerY = 445
+		rowStartX = -250
+		rowStartY = 480
+		rowoffset = 30
+		columnoffset = 350
+	elseif TwitchIntegrationConfig.UISize == 3 then
+		timerFontSize = 30
+		choiceFontSize = 25
+		backgroundX = ScreenCenterX + 245
+		backgroundY = ScreenCenterY + 475
+		backgroundScale = 0.8
+		backgroundScaleX = 1.63
+		backgroundScaleY = 1.0
+		numperrow = 3
+		timerX = 85
+		timerY = 435
+		rowStartX = -330
+		rowStartY = 470
+		rowoffset = 40
+		columnoffset = 405
+	end
 
 	components.VoteTimer = CreateScreenComponent({ Name = "BlankObstacle", Group = "Combat_Menu" })
 	components.VoteBackground = CreateScreenComponent({ Name = "TraitTrayDetailsBacking", Group = "Combat_Menu", Scale = backgroundScale, X = backgroundX, Y = backgroundY })
