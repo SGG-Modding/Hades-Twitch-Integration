@@ -287,3 +287,21 @@ function TwitchIntegration.SpawnHandsBoss(args)
       UseableOff({ Id = newEnemy.ObjectId })
     end
 end
+
+function TwitchIntegration.CreateDevotionEffect(args)
+    local GodName = GetRandomValue({
+            "Zeus",
+            "Poseidon",
+            "Athena",
+            "Aphrodite",
+            "Artemis",
+            "Ares",
+            "Dionysus",
+            "Demeter",
+        })
+    local newEnemy = DeepCopyTable( EnemyData[GodName.."UpgradeRoomWeapon"] )
+    newEnemy.ObjectId = SpawnUnit({ Name = GodName.."UpgradeRoomWeapon", Group = "Standing", DestinationId = CurrentRun.Hero.ObjectId, DoActivatePresentation = false })
+    SetupEnemyObject( newEnemy, CurrentRun )
+    wait(args.Duration)
+    Destroy({Id = newEnemy.ObjectId})
+end

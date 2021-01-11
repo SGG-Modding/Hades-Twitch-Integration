@@ -568,6 +568,19 @@ TwitchIntegrationEvents =
 			Args = {},
 		},
 	},
+	{
+		Name = "TwitchIntegration_CREATE_DEVOTION_EFFECT",
+		Weight = 1.0,
+		EventType = "Effect",
+		EventAlignment = "Bad",
+		ForcedCooldown = 5,
+		Enabled = true,
+		Function =
+		{
+			Name = "CreateDevotionEffect",
+			Args = {Duration = 15},
+		},
+	},
 }
 
 SaveIgnores["TwitchIntegrationData"] = true

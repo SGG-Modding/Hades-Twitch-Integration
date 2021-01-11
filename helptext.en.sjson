@@ -150,8 +150,8 @@
       DisplayName = "Hands boss battle"
     }
     {
-      Id = "TwitchIntegration_"
-      DisplayName = ""
+      Id = "TwitchIntegration_CREATE_DEVOTION_EFFECT"
+      DisplayName = "Anger a random god"
     }
     {
       Id = "TwitchIntegration_"
