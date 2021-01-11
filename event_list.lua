@@ -532,7 +532,7 @@ TwitchIntegrationEvents =
 		Weight = 1.0,
 		EventType = "Spawn",
 		EventAlignment = "Bad",
-		ForcedCooldown = 0,
+		ForcedCooldown = 5,
 		Enabled = true,
 		Function =
 		{
@@ -546,7 +546,7 @@ TwitchIntegrationEvents =
 		Weight = 1.0,
 		EventType = "Spawn",
 		EventAlignment = "Bad",
-		ForcedCooldown = 0,
+		ForcedCooldown = 5,
 		Enabled = true,
 		Function =
 		{
@@ -560,7 +560,7 @@ TwitchIntegrationEvents =
 		Weight = 1.0,
 		EventType = "Spawn",
 		EventAlignment = "Bad",
-		ForcedCooldown = 0,
+		ForcedCooldown = 5,
 		Enabled = true,
 		Function =
 		{

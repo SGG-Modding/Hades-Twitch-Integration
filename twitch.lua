@@ -11,6 +11,10 @@ local votes = {}
 for j=1, TwitchIntegrationConfig.OfferedChoices do
 	table.insert(votes, 0)
 end
+Cooldowns = {}
+
+SaveIgnores["Cooldowns"] = true
+
 local voters = {}
 
 local croomname = "error"
@@ -80,52 +84,82 @@ function OpenVotingWindow()
 	local rowoffset = 0
 	local columnoffset = 0
 
-	if TwitchIntegrationConfig.UISize == 1 then
-		timerFontSize = 20
-		choiceFontSize = 15
-		backgroundX = ScreenCenterX + 230
-		backgroundY = ScreenCenterY + 480
-		backgroundScale = 0.8
-		backgroundScaleX = 1.0
-		backgroundScaleY = 0.9
-		numperrow = 3
-		timerX = 90
-		timerY = 445
-		rowStartX = -110
-		rowStartY = 480
-		rowoffset = 30
-		columnoffset = 240
-	elseif TwitchIntegrationConfig.UISize == 2 then
-		timerFontSize = 25
-		choiceFontSize = 20
-		backgroundX = ScreenCenterX + 230
-		backgroundY = ScreenCenterY + 480
-		backgroundScale = 0.8
-		backgroundScaleX = 1.4
-		backgroundScaleY = 0.9
-		numperrow = 3
-		timerX = 90
-		timerY = 445
-		rowStartX = -250
-		rowStartY = 480
-		rowoffset = 30
-		columnoffset = 350
-	elseif TwitchIntegrationConfig.UISize == 3 then
-		timerFontSize = 30
-		choiceFontSize = 25
-		backgroundX = ScreenCenterX + 245
-		backgroundY = ScreenCenterY + 475
-		backgroundScale = 0.8
-		backgroundScaleX = 1.63
-		backgroundScaleY = 1.0
-		numperrow = 3
-		timerX = 85
-		timerY = 435
-		rowStartX = -330
-		rowStartY = 470
-		rowoffset = 40
-		columnoffset = 405
-	end
+	-- Provisional UI Scaling BEGIN
+
+	--[[ outputs
+		- backgroundX
+		- backgroundY
+		- backgroundScale
+		- backgroundScaleX
+		- backgroundScaleY
+		- choiceWidth
+		- choiceHeight
+		- choiceFontSize
+		- rowoffset
+		- columnoffset
+		- timerX
+		- timerY
+		- timerScale
+		- timerScaleX
+		- timerScaleY
+		- timerWidth
+		- timerHeight
+		- timerFontSize
+	]]
+
+	local s = TwitchIntegrationConfig.UISize or 1
+
+	local frameWidth = 1818
+	local frameWidthScale = 1
+	local frameHeight = 335
+	local frameHeightScale = 1
+	local frameWidthMax = 1818
+	local timerHeight = 110
+	local timerWidth = 180
+	local marginX = 5
+	local marginY = 5
+	local offsetWidthScale = 1
+	local offsetHeightScale = 1
+
+	local backgroundXCenter = ScreenCenterX + 230 + frameWidth/2
+	local backgroundYCenter = ScreenCenterY + 480 + frameHeight/2
+
+	local scaleContactsAt = frameWidthMax/frameWidthScale
+	local widthScale = math.min( s, scaleContactsAt )
+	local heightScale = math.max( s, scaleContactsAt ) + s - scaleContactsAt
+
+	timerFontSize = 20 * widthScale
+	choiceFontSize = 15 * widthScale
+
+	rowoffset = 30 * widthScale * offsetWidthScale
+	columnoffset = 240 * heightScale * offsetHeightScale
+
+	local backgroundWidth = frameWidth * widthScale
+	local backgroundHeight =  frameHeight * heightScale
+
+	backgroundX = backgroundXCenter - backgroundWidth/2
+	backgroundY = backgroundYCenter - backgroundHeight/2
+
+	rowStartX = backgroundX + marginX
+	rowStartY = backgroundY + marginY
+
+	local choiceWidth = 150 * ( backgroundWidth - 2*marginX + rowoffset ) / 3 - rowoffset
+	local choiceHeight = 80 * ( backgroundHeight - 2*marginY + columnoffset ) / 2 - columnoffset
+
+	timerY = (timerHeight + frameHeight) * heightScale
+	timerX = (timerWidth + frameWidth) * widthScale
+
+	backgroundScale = 0.8
+	backgroundScaleX = 1.0 * widthScale
+	backgroundScaleY = 0.9 * heightScale
+
+	local timerScale = timerWidth/frameWidth
+	local timerScaleX = backgroundScaleX
+	local timerScaleY = backgroundScaleY
+
+	numperrow = 3
+
+	-- Provisional UI Scaling END
 
 	components.VoteTimer = CreateScreenComponent({ Name = "BlankObstacle", Group = "Combat_Menu" })
 	components.VoteBackground = CreateScreenComponent({ Name = "TraitTrayDetailsBacking", Group = "Combat_Menu", Scale = backgroundScale, X = backgroundX, Y = backgroundY })
@@ -145,7 +179,7 @@ function OpenVotingWindow()
 		local offsetY = rowStartY + rowoffset*(math.floor((j-1)/numperrow))
 		components[key] = CreateScreenComponent({ Name = "BlankObstacle", Group = "Combat_Menu" })
 		CreateTextBox({ Id = components[key].Id, Text = "TwitchIntegration_Choice", FontSize = choiceFontSize,
-		LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].ui_name, VoteCount = 0},
+		LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].Name, VoteCount = 0},
 		OffsetX = offsetX, OffsetY = offsetY, Width = 400, Color = TwitchIntegrationConfig.ChoiceTextColor, Font = "AlegreyaSansSCExtraBold",
 		ShadowBlur = 0, ShadowColor = {0,0,0,1}, ShadowOffset={0, 1}, Justification = "Left" })
 	end
@@ -208,47 +242,101 @@ function TimeBetweenVote()
 
 	-- Calculate which 4 options will be used and such here
 	-- make a table with these options
-	local eventCount = 0
-
-	---DEBUGGING
-	local debugid = nil
-	local debugevent = nil
-
-	if TwitchIntegrationEvents ~= nil then
-		for i,data in ipairs(TwitchIntegrationEvents) do
-			eventCount = eventCount + 1
-
-			if debugid ~= nil and data.id == debugid then
-				debugevent = data
-			end
-
-			if data.cooldown ~= nil then
-					data.cooldown = nil
-			end
-
-
-		end
-	end
 
 	chosentable = {} -- this will contain the votes that we want to display and then run for this loop
-	if eventCount > 0 then
-		for i=1, TwitchIntegrationConfig.OfferedChoices do -- get 4 events for the twitch votes
-				local index = math.random(eventCount)
-				while TwitchIntegrationEvents[index].cooldown ~= nil do
-					index = math.random(eventCount)
-				end
-				TwitchIntegrationEvents[index].cooldown = true
-				table.insert(chosentable,TwitchIntegrationEvents[index])
+	local loopCount = 0
+
+	while TableLength( chosentable ) < TwitchIntegrationConfig.OfferedChoices and loopCount < 20 do
+		local weightedList = {}
+		for i, event in pairs( TwitchIntegrationEvents ) do
+			if event.Enabled
+			and not Contains(chosentable, event)
+			and not HasReachedTargetCount(chosentable, event.EventAlignment, "Alignment")
+			and not HasReachedTargetCount(chosentable, event.EventType, "Type")
+			and not Cooldowns[event.Name]
+			then
+				weightedList[i] = event.Weight
+			end
+
+			if loopCount >= 10
+			and event.Enabled
+			and not Contains(chosentable, event)
+			and not Cooldowns[event.Name]
+			then
+				DebugPrint({Text="Failsafe triggered!"})
+				weightedList[i] = event.Weight
+			end
 		end
 
-	end
-
-	if debugevent ~= nil then
-		chosentable = {debugevent,debugevent,debugevent,debugevent}
+		local index = GetRandomValueFromWeightedList( weightedList )
+		table.insert( chosentable, TwitchIntegrationEvents[index] )
+		loopCount = loopCount + 1
 	end
 
 	CloseNextVoteWindow()
 	thread(CountdownVote)
+end
+
+function ReduceCooldowns()
+	for event in pairs (Cooldowns) do
+		Cooldowns[event] = Cooldowns[event] - 1
+		if Cooldowns[event] <= 0 then
+			Cooldowns[event] = nil
+		end
+	end
+end
+
+function HasReachedTargetCount(events, target, type)
+
+	local goodCount = 0
+	local badCount = 0
+	local neutralCount = 0
+	local spawnCount = 0
+	local effectCount = 0
+	local lootCount = 0
+	local resourceCount = 0
+
+	if type == "Alignment" then
+		for i, event in pairs (events) do
+			if event.EventAlignment == "Good" then
+				goodCount = goodCount + 1
+			elseif event.EventAlignment == "Bad" then
+				badCount = badCount + 1
+			elseif event.EventAlignment == "Neutral" then
+				neutralCount = neutralCount + 1
+			end
+		end
+	elseif type == "Type" then
+		for i, event in pairs (events) do
+			if event.EventType == "Spawn" then
+				spawnCount = spawnCount + 1
+			elseif event.EventType == "Effect" then
+				effectCount = effectCount + 1
+			elseif event.EventType == "Loot" then
+				lootCount = lootCount + 1
+			elseif event.EventType == "Resource" then
+				resourceCount = resourceCount + 1
+			end
+		end
+	end
+
+	if goodCount >= TwitchIntegrationConfig.GoodChoiceCount and target == "Good" then
+		return true
+	elseif badCount >= TwitchIntegrationConfig.BadChoiceCount and target == "Bad" then
+		return true
+	elseif neutralCount >= TwitchIntegrationConfig.NeutralChoiceCount and target == "Neutral" then
+		return true
+	elseif spawnCount >= TwitchIntegrationConfig.SpawnChoiceCount and target == "Spawn" then
+		return true
+	elseif effectCount >= TwitchIntegrationConfig.EffectChoiceCount and target == "Effect" then
+		return true
+	elseif lootCount >= TwitchIntegrationConfig.LootChoiceCount and target == "Loot" then
+		return true
+	elseif resourceCount >= TwitchIntegrationConfig.ResourceChoiceCount and target == "Resource" then
+		return true
+	end
+
+	return false
 end
 
 function CountdownVote()
@@ -266,7 +354,7 @@ function CountdownVote()
 
 			for j=1, TwitchIntegrationConfig.OfferedChoices do
 				ModifyTextBox({ Id = ScreenAnchors.VotingWindow.Components["Vote" .. j].Id,
-				LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].ui_name, VoteCount = votes[j]},})
+				LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].Name, VoteCount = votes[j]},})
 			end
 			wait(1)
 		else
@@ -315,7 +403,12 @@ function CountdownVote()
 		wait(1)
 	end
 
-	thread(rngevent.action)
+	ReduceCooldowns()
+
+	Cooldowns[rngevent.Name] = rngevent.ForcedCooldown or 1
+	local action = rngevent.Function.Name
+	thread(TwitchIntegration[action], rngevent.Function.Args)
+	ValidateCheckpoint({ Valid = true })
 
 	CloseVotingWindow()
 	thread(TimeBetweenVote)
