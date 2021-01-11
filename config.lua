@@ -9,8 +9,18 @@
 TwitchIntegrationConfig = {
 	Username = "0lrevolution",
 	TimeBetweenVotes = 1,
-	VotingTime = 500,
+	VotingTime = 10,
 	OfferedChoices = 6,
+
+	GoodChoiceCount = 3, -- total of good + bad + neutral should be a minimum of 1 and maximum of 6 atm
+	BadChoiceCount = 3,
+	NeutralChoiceCount = 0, -- no neutral event atm
+
+	SpawnChoiceCount = 2, -- all those should add up to OfferedChoices + 1, and each should be at least 1
+	EffectChoiceCount = 2,
+	ResourceChoiceCount = 2,
+	LootChoiceCount = 2,
+
 	UISize = 3, -- 1 = small, 2 = medium, 3 = large
 	NextVoteTimerTextColor = Color.Yellow,
 	VoteTimerTextColor = Color.White,
