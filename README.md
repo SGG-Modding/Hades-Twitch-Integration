@@ -10,6 +10,5 @@ TODO: Add more effects and complete this readme.
 
 # Requirements
 
-Modimporter
-Modimporter's SJSON module
+Modimporter      
 Mod Utility
