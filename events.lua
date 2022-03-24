@@ -1,4 +1,4 @@
-TwitchIntegrationData =
+TwitchIntegration.Data =
 {
 --Did not reinvent this wheel, copied from CodexMenu
 	ZeusUpgrade =
@@ -90,7 +90,7 @@ TwitchIntegrationData =
   }
 }
 
-TwitchIntegrationEvents =
+TwitchIntegration.Events =
 {
 	-- Template
 	-- {
@@ -100,7 +100,7 @@ TwitchIntegrationEvents =
 	-- 	EventAlignment = "Bad", -- "Good", "Bad", "Neutral"...
 	-- 	ForcedCooldown = 5, -- either nil or a number value
 	-- 	Enabled = true, -- either true or false
-	-- 	Function =
+	-- 	Action =
 	-- 	{
 	-- 		Name = "EventFunction",
 	-- 		Args = {},
@@ -114,7 +114,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "HealPlayer",
 			Args = { Percentage = 10, },
@@ -128,7 +128,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "DamagePlayer",
 			Args = { Percentage = 10, },
@@ -142,7 +142,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "RoomRewardMaxHealthDrop"},
@@ -156,7 +156,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnLoot",
 			Args = { LootName = "WeaponUpgrade"},
@@ -170,7 +170,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnLoot",
 			Args = { LootName = "StackUpgrade"},
@@ -184,7 +184,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "RemoveRandomBoon",
 			Args = {},
@@ -198,7 +198,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnRandomLoot",
 			Args = {},
@@ -212,7 +212,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnRandomEnemies",
 			Args = { EnemyCount = 4, },
@@ -226,7 +226,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "GiveMoney",
 			Args = { Amount = 100, },
@@ -240,7 +240,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "RemoveMoney",
 			Args = { Amount = 100, },
@@ -254,7 +254,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "EmptySuperMeter",
 			Args = {},
@@ -268,7 +268,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "FillSuperMeter",
 			Args = {},
@@ -282,7 +282,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = false,
-		Function =
+		Action =
 		{
 			Name = "DisableDash",
 			Args = {},
@@ -296,7 +296,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "RoomWipe",
 			Args = {},
@@ -310,7 +310,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "RoomRewardMetaPointDrop", },
@@ -324,7 +324,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "GiftDrop", },
@@ -338,7 +338,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "LockKeyDrop", },
@@ -352,7 +352,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "SuperLockKeyDrop", },
@@ -366,7 +366,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "GemDrop", },
@@ -380,7 +380,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnConsumable",
 			Args = { LootName = "SuperGemDrop", },
@@ -394,7 +394,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = false,
-		Function =
+		Action =
 		{
 			Name = "ApplyEffectToEnemies",
 			Args = {},
@@ -408,7 +408,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = false,
-		Function =
+		Action =
 		{
 			Name = "SpawnEnemies",
 			Args = {},
@@ -422,7 +422,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = false,
-		Function =
+		Action =
 		{
 			Name = "SpawnEnemies",
 			Args = {},
@@ -436,7 +436,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = false,
-		Function =
+		Action =
 		{
 			Name = "SpawnBoon",
 			Args = {},
@@ -450,7 +450,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "HideUI",
 			Args = {},
@@ -464,7 +464,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "AddTrait",
 			Args = {},
@@ -478,7 +478,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "AddTrait",
 			Args = {},
@@ -492,7 +492,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "AddTrait",
 			Args = {},
@@ -506,7 +506,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "AddTrait",
 			Args = {},
@@ -520,7 +520,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Good",
 		ForcedCooldown = 0,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "AddDefiance",
 			Args = {},
@@ -534,7 +534,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 5,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnMineBoss",
 			Args = {},
@@ -548,7 +548,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 5,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnRatBoss",
 			Args = {},
@@ -562,7 +562,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 5,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "SpawnHandsBoss",
 			Args = {},
@@ -575,7 +575,7 @@ TwitchIntegrationEvents =
 		EventAlignment = "Bad",
 		ForcedCooldown = 5,
 		Enabled = true,
-		Function =
+		Action =
 		{
 			Name = "CreateDevotionEffect",
 			Args = {Duration = 15},
@@ -583,5 +583,5 @@ TwitchIntegrationEvents =
 	},
 }
 
-SaveIgnores["TwitchIntegrationData"] = true
-SaveIgnores["TwitchIntegrationEvents"] = true
+SaveIgnores["TwitchIntegration.Data"] = true
+SaveIgnores["TwitchIntegration.Events"] = true

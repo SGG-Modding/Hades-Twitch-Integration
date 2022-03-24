@@ -1,8 +1,9 @@
 :: Start of a Twitch Integration Mod
+Import "main.lua"
 Import "config.lua"
-Import "event_list.lua"
+Import "events.lua"
 Import "twitch.lua"
-Import "scripts.lua"
+Import "actions.lua"
 To "Game/Text/en/HelpText.en.sjson"
 SJSON "helptext.en.sjson"
 To "Game/Text/fr/HelpText.fr.sjson"

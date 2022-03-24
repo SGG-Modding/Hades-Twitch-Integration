@@ -3,10 +3,10 @@
 
 -- USAGE INSTRUCTIONS
 --		Enter your username in all lowercase in the Username field making sure to keep the " around it
---		Enter the cooldown time between votes in seconds in the TimeBetweenVotes field
+--		Enter the cooldown time between votes in seconds in the TwitchIntegration.Config.TimeBetweenVotes field
 --		Enter the time in seconds your viewers have to make their votes in the VotingTime field
 --		DO NOT TOUCH ANYTHING ELSE xD
-TwitchIntegrationConfig = {
+TwitchIntegration.Config = {
 	Username = "0lrevolution",
 	TimeBetweenVotes = 1,
 	VotingTime = 10,
@@ -26,4 +26,3 @@ TwitchIntegrationConfig = {
 	VoteTimerTextColor = Color.White,
 	ChoiceTextColor = Color.Yellow,
 }
-SaveIgnores["TwitchIntegrationConfig"] = true

@@ -1,21 +1,16 @@
-
-TwitchIntegration = {}
-
-SaveIgnores["TwitchIntegration"] = true
-
 --Mapped to id "HEALTH_PLUS"
-function TwitchIntegration.HealPlayer(args)
+function TwitchIntegration.Actions.HealPlayer(args)
         Heal( CurrentRun.Hero, { HealAmount = CurrentRun.Hero.MaxHealth / args.Percentage, SourceName = "Item" } )
         thread( UpdateHealthUI )
 end
 
 --Mapped to id "HEALTH_MINUS"
-function TwitchIntegration.DamagePlayer(args)
+function TwitchIntegration.Actions.DamagePlayer(args)
     Damage( CurrentRun.Hero, { triggeredById = CurrentRun.Hero.ObjectId, DamageAmount = CurrentRun.Hero.MaxHealth / args.Percentage, MinHealth = 1, PureDamage = true, Silent = false } )
 end
 
 --Mapped to id "MAX_HEALTH_PLUS"
-function TwitchIntegration.SpawnConsumable(args)
+function TwitchIntegration.Actions.SpawnConsumable(args)
     local consumableId = SpawnObstacle({ Name = args.LootName, DestinationId =  CurrentRun.Hero.ObjectId, Group = "Standing" })
     local cost = 0
     local consumable = CreateConsumableItem( consumableId, args.LootName, cost )
@@ -26,7 +21,7 @@ function TwitchIntegration.SpawnConsumable(args)
 end
 
 --Mapped to id "SPAWN_HAMMER"
-function TwitchIntegration.SpawnLoot(args)
+function TwitchIntegration.Actions.SpawnLoot(args)
     while CurrentRun.CurrentRoom.ChosenRewardType == "Devotion" and not IsCombatEncounterActive( CurrentRun ) do
         wait(1)
     end
@@ -43,7 +38,7 @@ end
 
 --Mapepd to id "REMOVE_BOON"
 -- TODO : REMAKE
-function TwitchIntegration.RemoveRandomBoon(args)
+function TwitchIntegration.Actions.RemoveRandomBoon(args)
     local traitnum = 0
     for i, traitData in pairs( CurrentRun.Hero.Traits ) do
         traitnum = traitnum + 1
@@ -59,8 +54,8 @@ end
 
 --Mapped to id "SPAWN_RANDOM_BOON"
 -- TODO : REMAKE
-function TwitchIntegration.SpawnRandomLoot(args)
-    local godname = TwitchIntegrationData.GodNames[math.random(10)]
+function TwitchIntegration.Actions.SpawnRandomLoot(args)
+    local godname = TwitchIntegration.Data.GodNames[math.random(10)]
     while CurrentRun.CurrentRoom.ChosenRewardType == "Devotion" and not IsCombatEncounterActive( CurrentRun ) do
         wait(1)
     end
@@ -69,10 +64,10 @@ end
 
 --Mapped to id "SPAWN_ENEMIES"
 -- TODO : REMAKE
-function TwitchIntegration.SpawnRandomEnemies(args)
+function TwitchIntegration.Actions.SpawnRandomEnemies(args)
     local EnemyTable = {}
     for i = 1, args.EnemyCount do
-      table.insert(EnemyTable,TwitchIntegrationData.EnemyNames[math.random(44)])
+      table.insert(EnemyTable,TwitchIntegration.Data.EnemyNames[math.random(44)])
     end
 
     for _,v in ipairs(EnemyTable) do
@@ -85,7 +80,7 @@ function TwitchIntegration.SpawnRandomEnemies(args)
 end
 
 --Mapped to id "GIVE_PLAYER_GOLD"
-function TwitchIntegration.GiveMoney(args)
+function TwitchIntegration.Actions.GiveMoney(args)
     local sound = "/SFX/GoldCoinPickup"
     PlaySound({ Name = sound, ManagerCap = 28 })
     CurrentRun.Money = CurrentRun.Money + args.Amount
@@ -94,7 +89,7 @@ function TwitchIntegration.GiveMoney(args)
 end
 
 --Mapped to id "REMOVE_PLAYER_GOLD"
-function TwitchIntegration.RemoveMoney(args)
+function TwitchIntegration.Actions.RemoveMoney(args)
     local sound = "/SFX/GoldCoinPickup"
     PlaySound({ Name = sound, ManagerCap = 28 })
     CurrentRun.Money = math.max(CurrentRun.Money - args.Amount, 0)
@@ -103,24 +98,24 @@ function TwitchIntegration.RemoveMoney(args)
 end
 
 --Mapped to id "DRAIN_GOD_GAUGE"
-function TwitchIntegration.EmptySuperMeter(args)
+function TwitchIntegration.Actions.EmptySuperMeter(args)
     BuildSuperMeter(CurrentRun,CurrentRun.Hero.SuperMeter * -1)
 end
 
 --Mapped to id "FILL_GOD_GAUGE"
-function TwitchIntegration.FillSuperMeter(args)
+function TwitchIntegration.Actions.FillSuperMeter(args)
     BuildSuperMeter(CurrentRun,CurrentRun.Hero.SuperMeterLimit)
 end
 
 -- Mapped to id "DISALLOW_DASH"
 -- TODO: REMAKE
-function TwitchIntegration.DisableDash(args)
+function TwitchIntegration.Actions.DisableDash(args)
     RecordSpeedModifier( 0.5, 60 )
 end
 
 -- Mapped to id "KILL_ALL_ENEMIES"
 -- TODO: Don't kill bosses + arg for traps
-function TwitchIntegration.RoomWipe(args)
+function TwitchIntegration.Actions.RoomWipe(args)
     for enemyId, enemy in pairs(ActiveEnemies) do
 		if enemy and not enemy.IsDead then
 		    Kill(enemy)
@@ -129,15 +124,15 @@ function TwitchIntegration.RoomWipe(args)
 end
 
 -- TODO: MAKE
-function TwitchIntegration.ApplyEffectToEnemies(args)
+function TwitchIntegration.Actions.ApplyEffectToEnemies(args)
 end
 
 -- TODO: MAKE
-function TwitchIntegration.SpawnEnemies(args)
+function TwitchIntegration.Actions.SpawnEnemies(args)
 end
 
 -- TODO: MAKE
-function TwitchIntegration.SpawnBoon(args)
+function TwitchIntegration.Actions.SpawnBoon(args)
 end
 
 --Mapped to id "SPAWN_MINI_CHARIOTS"
@@ -145,7 +140,7 @@ function TwitchSpawnMiniChariots(event)
     local EnemyTable = {}
     local amount = math.random(8)
     for i = 1, amount do
-      table.insert(EnemyTable,TwitchIntegrationData.EnemyNames[9])
+      table.insert(EnemyTable,TwitchIntegration.Data.EnemyNames[9])
     end
 
     for _,v in ipairs(EnemyTable) do
@@ -162,7 +157,7 @@ function TwichSpawnPests(event)
     local EnemyTable = {}
     local amount = math.random(8)
     for i = 1, amount do
-      table.insert(EnemyTable,TwitchIntegrationData.EnemyNames[45])
+      table.insert(EnemyTable,TwitchIntegration.Data.EnemyNames[45])
     end
 
     for _,v in ipairs(EnemyTable) do
@@ -177,7 +172,7 @@ end
 --[[
 --Mapped to id "SPAWN_CHAOS_BOON"
 function TwitchSpawnChaosInteractible(event)
-local godname = TwitchIntegrationData.GodNames[10]
+local godname = TwitchIntegration.Data.GodNames[10]
 	while CurrentRun.CurrentRoom.ChosenRewardType == "Devotion" and not IsCombatEncounterActive( CurrentRun ) do
 		wait(1)
 	end
@@ -187,7 +182,7 @@ end
 
 --Mapped to id "HIDE_UI"
 -- TODO: REMAKE
-function TwitchIntegration.HideUI(args)
+function TwitchIntegration.Actions.HideUI(args)
     if ConfigOptionCache.ShowUIAnimations then
         SetConfigOption({ Name = "ShowUIAnimations", Value = false })
         SetConfigOption({ Name = "UseOcclusion", Value = false })
@@ -213,33 +208,33 @@ function TwitchIntegration.HideUI(args)
 end
 
 -- TODO: MAKE
-function TwitchIntegration.AddTrait(args)
+function TwitchIntegration.Actions.AddTrait(args)
 end
 
 --Mapped to id "TEMP_BOON_RARITY"
 function TwitchForceBoonUp(event)
-    AddTraitToHero({ TraitName = TwitchIntegrationData.TempItems[1] })
+    AddTraitToHero({ TraitName = TwitchIntegration.Data.TempItems[1] })
 end
 
 --Mapped to id "TEMP_BOON_CHAOS"
 function TwitchForceNextGate(event)
-    AddTraitToHero({ TraitName = TwitchIntegrationData.TempItems[3] })
+    AddTraitToHero({ TraitName = TwitchIntegration.Data.TempItems[3] })
 end
 
 --Mapped to id "TEMP_BOON_TROVE"
 function TwitchForceTrove(event)
-    AddTraitToHero({ TraitName = TwitchIntegrationData.TempItems[4] })
+    AddTraitToHero({ TraitName = TwitchIntegration.Data.TempItems[4] })
 end
 
 --Mapped to id "TEMP_BOON_FISHING"
 function TwitchForceFishPoint(event)
-    AddTraitToHero({ TraitName = TwitchIntegrationData.TempItems[5] })
+    AddTraitToHero({ TraitName = TwitchIntegration.Data.TempItems[5] })
 end
 
 --Mapped to id "TEMP_BOON_LASTSTAND"
 -- TODO: REMAKE
-function TwitchIntegration.AddDefiance(args)
-    local consumableName = TwitchIntegrationData.TempItems[6]
+function TwitchIntegration.Actions.AddDefiance(args)
+    local consumableName = TwitchIntegration.Data.TempItems[6]
     local playerId = GetIdsByType({ Name = "_PlayerUnit" })
     local consumableId = SpawnObstacle({ Name = consumableName, DestinationId = playerId, Group = "Standing" })
     local consumable = CreateConsumableItem( consumableId, consumableName, 0 )
@@ -251,7 +246,7 @@ end
 
 --Mapped to id "SPAWN_MINELAYER_BOSS"
 -- TODO: REMAKE
-function TwitchIntegration.SpawnMineBoss(args)
+function TwitchIntegration.Actions.SpawnMineBoss(args)
     local EnemyTable = { "ThiefImpulseMineLayerMiniboss", "ThiefMineLayerElite", "ThiefMineLayerElite", "ThiefMineLayer", "ThiefMineLayer", "ThiefMineLayer" }      
     for _,v in ipairs(EnemyTable) do
       local enemyData = EnemyData[v]
@@ -264,7 +259,7 @@ end
 
 --Mapped to id "SPAWN_RATTHUG_BOSS"
 -- TODO: REMAKE
-function TwitchIntegration.SpawnRatBoss(args)
+function TwitchIntegration.Actions.SpawnRatBoss(args)
       local EnemyTable = { "RatThugMiniboss", "RatThugElite", "RatThugElite", "RatThug", "RatThug", "RatThug" }
       for _,v in ipairs(EnemyTable) do
         local enemyData = EnemyData[v]
@@ -277,7 +272,7 @@ end
 
 --Mapped to id "SPAWN_HELPING_HANDS"
 -- TODO: REMAKE
-function TwitchIntegration.SpawnHandsBoss(args)
+function TwitchIntegration.Actions.SpawnHandsBoss(args)
     local EnemyTable = { "DisembodiedHand", "DisembodiedHand", "DisembodiedHand", "DisembodiedHand", "DisembodiedHand", "DisembodiedHand" }
     for _,v in ipairs(EnemyTable) do
       local enemyData = EnemyData[v]
@@ -288,7 +283,7 @@ function TwitchIntegration.SpawnHandsBoss(args)
     end
 end
 
-function TwitchIntegration.CreateDevotionEffect(args)
+function TwitchIntegration.Actions.CreateDevotionEffect(args)
     local GodName = GetRandomValue({
             "Zeus",
             "Poseidon",

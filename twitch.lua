@@ -8,24 +8,19 @@ local channeljoined = 0
 local client = nil
 local chosentable = {}
 local votes = {}
-for j=1, TwitchIntegrationConfig.OfferedChoices do
+
+for j=1, TwitchIntegration.Config.OfferedChoices do
 	table.insert(votes, 0)
 end
-Cooldowns = {}
-
-SaveIgnores["Cooldowns"] = true
 
 local voters = {}
-
 local croomname = "error"
 
-local NoVoteRooms = { "RoomPreRun", "DeathAreaBedroom", "DeathArea", "PostBoss" }
+TwitchIntegration.NoVoteRooms = { "RoomPreRun", "DeathAreaBedroom", "DeathArea", "PostBoss" }
+TwitchIntegration.Data.VotingWindow = { Components = {} }
+TwitchIntegration.Data.NextVotingWindow = { Components = {} }
 
-
-TwitchIntegrationData.VotingWindow = { Components = {} }
-TwitchIntegrationData.NextVotingWindow = { Components = {} }
-
-function IsInArray(array,value)
+function TwitchIntegration.TwitchIntegration.IsInArray(array,value)
 	for _,k in ipairs(array) do
 		if k == value then
 			return true
@@ -34,7 +29,7 @@ function IsInArray(array,value)
 	return false
 end
 
-function IsInGame()
+function TwitchIntegration.IsInGame()
 	if CurrentRun ~= nil and CurrentRun.CurrentRoom ~= nil then
 
 		-- If dead, leaving a room or on a screen transition
@@ -55,9 +50,9 @@ function IsInGame()
 	return false
 end
 
-function OpenVotingWindow()
+function TwitchIntegration.OpenVotingWindow()
 
-	ScreenAnchors.VotingWindow = DeepCopyTable(TwitchIntegrationData.VotingWindow)
+	ScreenAnchors.VotingWindow = DeepCopyTable(TwitchIntegration.Data.VotingWindow)
 	local screen = ScreenAnchors.VotingWindow
 	local components = screen.Components
 	screen.Name = "VotingWindowName"
@@ -84,7 +79,7 @@ function OpenVotingWindow()
 	local rowoffset = 0
 	local columnoffset = 0
 
-	if TwitchIntegrationConfig.UISize == 1 then
+	if TwitchIntegration.Config.UISize == 1 then
 		timerFontSize = 20
 		choiceFontSize = 15
 		backgroundX = ScreenCenterX + 230
@@ -99,7 +94,7 @@ function OpenVotingWindow()
 		rowStartY = 480
 		rowoffset = 30
 		columnoffset = 240
-	elseif TwitchIntegrationConfig.UISize == 2 then
+	elseif TwitchIntegration.Config.UISize == 2 then
 		timerFontSize = 25
 		choiceFontSize = 20
 		backgroundX = ScreenCenterX + 230
@@ -114,7 +109,7 @@ function OpenVotingWindow()
 		rowStartY = 480
 		rowoffset = 30
 		columnoffset = 350
-	elseif TwitchIntegrationConfig.UISize == 3 then
+	elseif TwitchIntegration.Config.UISize == 3 then
 		timerFontSize = 30
 		choiceFontSize = 25
 		backgroundX = ScreenCenterX + 245
@@ -140,23 +135,23 @@ function OpenVotingWindow()
 
 	CreateTextBox({ Id = components.VoteTimer.Id, Text = "TwitchIntegration_CurrentVoteTimer", FontSize = timerFontSize,
 	LuaKey = "TempTextData", LuaValue = { Time = 999 },
-	OffsetX = timerX, OffsetY = timerY, Width = 400, Color = TwitchIntegrationConfig.VoteTimerTextColor, Font = "AlegreyaSansSCExtraBold",
+	OffsetX = timerX, OffsetY = timerY, Width = 400, Color = TwitchIntegration.Config.VoteTimerTextColor, Font = "AlegreyaSansSCExtraBold",
 	ShadowBlur = 0, ShadowColor = {0,0,0,1}, ShadowOffset={0, 1}, Justification = "Left"})
 
-	for j=1, TwitchIntegrationConfig.OfferedChoices do
+	for j=1, TwitchIntegration.Config.OfferedChoices do
 		local key = "Vote"..j
 		local offsetX = rowStartX + columnoffset*((j-1) % numperrow)
 		local offsetY = rowStartY + rowoffset*(math.floor((j-1)/numperrow))
 		components[key] = CreateScreenComponent({ Name = "BlankObstacle", Group = "Combat_Menu" })
 		CreateTextBox({ Id = components[key].Id, Text = "TwitchIntegration_Choice", FontSize = choiceFontSize,
 		LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].Name, VoteCount = 0},
-		OffsetX = offsetX, OffsetY = offsetY, Width = 400, Color = TwitchIntegrationConfig.ChoiceTextColor, Font = "AlegreyaSansSCExtraBold",
+		OffsetX = offsetX, OffsetY = offsetY, Width = 400, Color = TwitchIntegration.Config.ChoiceTextColor, Font = "AlegreyaSansSCExtraBold",
 		ShadowBlur = 0, ShadowColor = {0,0,0,1}, ShadowOffset={0, 1}, Justification = "Left" })
 	end
 end
 
-function OpenNextVoteWindow()
-	ScreenAnchors.NextVotingWindow = DeepCopyTable(TwitchIntegrationData.NextVotingWindow)
+function TwitchIntegration.OpenNextVoteWindow()
+	ScreenAnchors.NextVotingWindow = DeepCopyTable(TwitchIntegration.Data.NextVotingWindow)
 	local screen = ScreenAnchors.NextVotingWindow
 	local components = screen.Components
 	screen.Name = "NextVotingWindowName"
@@ -169,11 +164,11 @@ function OpenNextVoteWindow()
 
 	CreateTextBox({ Id = components.VoteTimer.Id, Text = "TwitchIntegration_NextVoteTimer", FontSize = 30,
 	LuaKey = "TempTextData", LuaValue = { Time = 999 },
-	OffsetX = 260, OffsetY = -510, Width = 400, Color = TwitchIntegrationConfig.NextVoteTimerTextColor, Font = "AlegreyaSansSCExtraBold",
+	OffsetX = 260, OffsetY = -510, Width = 400, Color = TwitchIntegration.Config.NextVoteTimerTextColor, Font = "AlegreyaSansSCExtraBold",
 	ShadowBlur = 0, ShadowColor = {0,0,0,1}, ShadowOffset={0, 1}, Justification = "Left"})
 end
 
-function CloseVotingWindow()
+function TwitchIntegration.CloseVotingWindow()
 	if ScreenAnchors.VotingWindow ~= nil then
 		CloseScreen(GetAllIds(ScreenAnchors.VotingWindow.Components), 0.1)
 		PlaySound({ Name = "/SFX/Menu Sounds/GeneralWhooshMENU" })
@@ -181,7 +176,7 @@ function CloseVotingWindow()
 	end
 end
 
-function CloseNextVoteWindow()
+function TwitchIntegration.CloseNextVoteWindow()
 	if ScreenAnchors.NextVotingWindow ~= nil then
 		CloseScreen(GetAllIds(ScreenAnchors.NextVotingWindow.Components), 0.1)
 		PlaySound({ Name = "/SFX/Menu Sounds/GeneralWhooshMENU" })
@@ -189,20 +184,20 @@ function CloseNextVoteWindow()
 	end
 end
 
-function TimeBetweenVote()
-	local betweentime = TwitchIntegrationConfig.TimeBetweenVotes
+function TwitchIntegration.TimeBetweenVote()
+	local betweentime = TwitchIntegration.Config.TimeBetweenVotes
 	for i=betweentime,1,-1 do
-		if IsInGame() then
+		if TwitchIntegration.IsInGame() then
 
 			if ScreenAnchors.NextVotingWindow == nil then
-				OpenNextVoteWindow()
+				TwitchIntegration.OpenNextVoteWindow()
 			end
 
 			ModifyTextBox({ Id = ScreenAnchors.NextVotingWindow.Components.VoteTimer.Id, Text = "TwitchIntegration_NextVoteTimer",
 			LuaKey = "TempTextData", LuaValue = { Time = i},})
 			wait(1)
 		else
-			while not IsInGame() do
+			while not TwitchIntegration.IsInGame() do
 				i = i+1
 				wait(1)
 			end
@@ -216,14 +211,14 @@ function TimeBetweenVote()
 	chosentable = {} -- this will contain the votes that we want to display and then run for this loop
 	local loopCount = 0
 
-	while TableLength( chosentable ) < TwitchIntegrationConfig.OfferedChoices and loopCount < 20 do
+	while TableLength( chosentable ) < TwitchIntegration.Config.OfferedChoices and loopCount < 20 do
 		local weightedList = {}
-		for i, event in pairs( TwitchIntegrationEvents ) do
+		for i, event in pairs( TwitchIntegration.Events ) do
 			if event.Enabled
 			and not Contains(chosentable, event)
-			and not HasReachedTargetCount(chosentable, event.EventAlignment, "Alignment")
-			and not HasReachedTargetCount(chosentable, event.EventType, "Type")
-			and not Cooldowns[event.Name]
+			and not TwitchIntegration.HasReachedTargetCount(chosentable, event.EventAlignment, "Alignment")
+			and not TwitchIntegration.HasReachedTargetCount(chosentable, event.EventType, "Type")
+			and not TwitchIntegration.Cooldowns[event.Name]
 			then
 				weightedList[i] = event.Weight
 			end
@@ -231,7 +226,7 @@ function TimeBetweenVote()
 			if loopCount >= 10
 			and event.Enabled
 			and not Contains(chosentable, event)
-			and not Cooldowns[event.Name]
+			and not TwitchIntegration.Cooldowns[event.Name]
 			then
 				DebugPrint({Text="Failsafe triggered!"})
 				weightedList[i] = event.Weight
@@ -239,24 +234,24 @@ function TimeBetweenVote()
 		end
 
 		local index = GetRandomValueFromWeightedList( weightedList )
-		table.insert( chosentable, TwitchIntegrationEvents[index] )
+		table.insert( chosentable, TwitchIntegration.Events[index] )
 		loopCount = loopCount + 1
 	end
 
-	CloseNextVoteWindow()
-	thread(CountdownVote)
+	TwitchIntegration.CloseNextVoteWindow()
+	thread(TwitchIntegration.CountdownVote)
 end
 
-function ReduceCooldowns()
-	for event in pairs (Cooldowns) do
-		Cooldowns[event] = Cooldowns[event] - 1
-		if Cooldowns[event] <= 0 then
-			Cooldowns[event] = nil
+function TwitchIntegration.ReduceCooldowns()
+	for event in pairs (TwitchIntegration.Cooldowns) do
+		TwitchIntegration.Cooldowns[event] = TwitchIntegration.Cooldowns[event] - 1
+		if TwitchIntegration.Cooldowns[event] <= 0 then
+			TwitchIntegration.Cooldowns[event] = nil
 		end
 	end
 end
 
-function HasReachedTargetCount(events, target, type)
+function TwitchIntegration.HasReachedTargetCount(events, target, type)
 
 	local goodCount = 0
 	local badCount = 0
@@ -290,45 +285,45 @@ function HasReachedTargetCount(events, target, type)
 		end
 	end
 
-	if goodCount >= TwitchIntegrationConfig.GoodChoiceCount and target == "Good" then
+	if goodCount >= TwitchIntegration.Config.GoodChoiceCount and target == "Good" then
 		return true
-	elseif badCount >= TwitchIntegrationConfig.BadChoiceCount and target == "Bad" then
+	elseif badCount >= TwitchIntegration.Config.BadChoiceCount and target == "Bad" then
 		return true
-	elseif neutralCount >= TwitchIntegrationConfig.NeutralChoiceCount and target == "Neutral" then
+	elseif neutralCount >= TwitchIntegration.Config.NeutralChoiceCount and target == "Neutral" then
 		return true
-	elseif spawnCount >= TwitchIntegrationConfig.SpawnChoiceCount and target == "Spawn" then
+	elseif spawnCount >= TwitchIntegration.Config.SpawnChoiceCount and target == "Spawn" then
 		return true
-	elseif effectCount >= TwitchIntegrationConfig.EffectChoiceCount and target == "Effect" then
+	elseif effectCount >= TwitchIntegration.Config.EffectChoiceCount and target == "Effect" then
 		return true
-	elseif lootCount >= TwitchIntegrationConfig.LootChoiceCount and target == "Loot" then
+	elseif lootCount >= TwitchIntegration.Config.LootChoiceCount and target == "Loot" then
 		return true
-	elseif resourceCount >= TwitchIntegrationConfig.ResourceChoiceCount and target == "Resource" then
+	elseif resourceCount >= TwitchIntegration.Config.ResourceChoiceCount and target == "Resource" then
 		return true
 	end
 
 	return false
 end
 
-function CountdownVote()
+function TwitchIntegration.CountdownVote()
 
-	OpenVotingWindow()
-	local votingtime = TwitchIntegrationConfig.VotingTime
+	TwitchIntegration.OpenVotingWindow()
+	local votingtime = TwitchIntegration.Config.VotingTime
 	for i=votingtime,1,-1 do
-		if IsInGame() then
+		if TwitchIntegration.IsInGame() then
 
 			if ScreenAnchors.VotingWindow == nil then
-				OpenVotingWindow()
+				TwitchIntegration.OpenVotingWindow()
 			end
 			ModifyTextBox({ Id = ScreenAnchors.VotingWindow.Components.VoteTimer.Id,
 			LuaKey = "TempTextData", LuaValue = { Time = i},})
 
-			for j=1, TwitchIntegrationConfig.OfferedChoices do
+			for j=1, TwitchIntegration.Config.OfferedChoices do
 				ModifyTextBox({ Id = ScreenAnchors.VotingWindow.Components["Vote" .. j].Id,
 				LuaKey = "TempTextData", LuaValue = { ChoiceNum = j, ChoiceName = chosentable[j].Name, VoteCount = votes[j]},})
 			end
 			wait(1)
 		else
-			while not IsInGame() do
+			while not TwitchIntegration.IsInGame() do
 				i = i+1
 				wait(1)
 			end
@@ -338,7 +333,7 @@ function CountdownVote()
 
 	---Here is where we find which event had the most votes
 	local winner = 0
-	for i=1, TwitchIntegrationConfig.OfferedChoices do
+	for i=1, TwitchIntegration.Config.OfferedChoices do
 		if votes[i] > winner then
 			winner = votes[i]
 		end
@@ -347,7 +342,7 @@ function CountdownVote()
 	local theevents = {}
 
 	--Add all events which match the highest vote (which should be all 4 if no votes were cast)
-	for i=1, TwitchIntegrationConfig.OfferedChoices do
+	for i=1, TwitchIntegration.Config.OfferedChoices do
 		if votes[i] == winner then
 			table.insert(theevents,chosentable[i])
 		end
@@ -364,27 +359,27 @@ function CountdownVote()
 	local rngevent = theevents[selectedEventIndex]
 
 	votes = {}
-	for j=1, TwitchIntegrationConfig.OfferedChoices do
+	for j=1, TwitchIntegration.Config.OfferedChoices do
 		table.insert(votes, 0)
 	end
 	voters = {}
 
-	while not IsInGame() do
+	while not TwitchIntegration.IsInGame() do
 		wait(1)
 	end
 
-	ReduceCooldowns()
+	TwitchIntegration.ReduceCooldowns()
 
-	Cooldowns[rngevent.Name] = rngevent.ForcedCooldown or 1
-	local action = rngevent.Function.Name
-	thread(TwitchIntegration[action], rngevent.Function.Args)
+	TwitchIntegration.Cooldowns[rngevent.Name] = rngevent.ForcedCooldown or 1
+	local action = rngevent.Action.Name
+	thread(TwitchIntegration.Actions[action] or _G[action], rngevent.Action.Args)
 	ValidateCheckpoint({ Valid = true })
 
-	CloseVotingWindow()
-	thread(TimeBetweenVote)
+	TwitchIntegration.CloseVotingWindow()
+	thread(TwitchIntegration.TimeBetweenVote)
 end
 
-function TwitchConnect() -- Here we start the twitch integration on a thread
+function TwitchIntegration.TwitchConnect() -- Here we start the twitch integration on a thread
 	client = socket.tcp()
 	host = "irc.chat.twitch.tv"
 	nick = "justinfan1893"
@@ -406,7 +401,7 @@ function TwitchConnect() -- Here we start the twitch integration on a thread
 		resp, err = client:receive()
 		if resp ~= nil then
 			if string.find(resp,"PRIVMSG") and voting == 1 then -- If we are accepting votes and a twitch message comes in
-				local a,b = string.find(resp,"PRIVMSG #" .. TwitchIntegrationConfig.Username .. " :",1,true)
+				local a,b = string.find(resp,"PRIVMSG #" .. TwitchIntegration.Config.Username .. " :",1,true)
 				local incmessage = string.sub(resp,b+1)
 
 				local startindex = string.find(resp,':')
@@ -414,8 +409,8 @@ function TwitchConnect() -- Here we start the twitch integration on a thread
 				local sender = string.sub(resp,startindex + 1, endindex-1)
 
 				--If sender has not already made a vote
-				if not IsInArray(voters,sender) then
-					for i=1,TwitchIntegrationConfig.OfferedChoices do
+				if not TwitchIntegration.IsInArray(voters,sender) then
+					for i=1,TwitchIntegration.Config.OfferedChoices do
 						if incmessage:find("^" .. i) ~= nil then -- If a 1 (or x emote in future) was found at BEGINNING
 							votes[i] = votes[i] + 1
 							table.insert(voters,sender)
@@ -426,10 +421,10 @@ function TwitchConnect() -- Here we start the twitch integration on a thread
 
 				--This needs more filtering, we have the message but now we need to extract the first number that is 1-4
 			elseif string.find(resp,"tmi.twitch.tv 376") then -- We got the Hello Message... Join a channel
-				client:send("JOIN #" .. TwitchIntegrationConfig.Username .."\r\n")
+				client:send("JOIN #" .. TwitchIntegration.Config.Username .."\r\n")
 			elseif string.find(resp, "tmi.twitch.tv JOIN") then -- We finished joining a channel.
 				channeljoined = 1
-				thread(TimeBetweenVote)
+				thread(TwitchIntegration.TimeBetweenVote)
 			elseif string.find(resp,"PING :tmi.twitch.tv") then -- We reveived a PING, reply back with PONG!
 				client:send("PONG :tmi.twitch.tv\r\n")
 			end
@@ -445,8 +440,7 @@ function TwitchConnect() -- Here we start the twitch integration on a thread
 	channeljoined = 0
 end
 
-OnAnyLoad{function(triggerArgs)
-
+function TwitchIntegration.LoadTrigger(triggerArgs)
 	if triggerArgs ~= nil and triggerArgs.name ~= nil then
 		croomname = triggerArgs.name
 	else
@@ -455,7 +449,9 @@ OnAnyLoad{function(triggerArgs)
 
 	if isconnected == 0 and CurrentRun ~= nil then
 		if CurrentRun.CurrentRoom ~= nil then
-			thread(TwitchConnect)
+			thread(TwitchIntegration.TwitchConnect)
 		end
 	end
-end}
+end
+
+OnAnyLoad{TwitchIntegration.LoadTrigger}
