@@ -1,11 +1,5 @@
-package.path = "../Content/Mods/TwitchIntegration/libs/share/?.lua;" .. package.path
-package.cpath = "../Content/Mods/TwitchIntegration/libs/lib/?.dll;" .. package.cpath
-local socket = require("socket")
-
 local voting = 0
 local isconnected = 0
-local channeljoined = 0
-local client = nil
 local chosentable = {}
 local votes = {}
 
@@ -20,7 +14,7 @@ TwitchIntegration.NoVoteRooms = { "RoomPreRun", "DeathAreaBedroom", "DeathArea",
 TwitchIntegration.Data.VotingWindow = { Components = {} }
 TwitchIntegration.Data.NextVotingWindow = { Components = {} }
 
-function TwitchIntegration.TwitchIntegration.IsInArray(array,value)
+function TwitchIntegration.IsInArray(array,value)
 	for _,k in ipairs(array) do
 		if k == value then
 			return true
@@ -38,7 +32,7 @@ function TwitchIntegration.IsInGame()
 		end
 
 		-- If in an invalid room
-		for _,roomname in ipairs(NoVoteRooms) do
+		for _,roomname in ipairs(TwitchIntegration.NoVoteRooms) do
 			if string.find(croomname, roomname) then
 				return false
 			end
@@ -308,6 +302,8 @@ function TwitchIntegration.CountdownVote()
 
 	TwitchIntegration.OpenVotingWindow()
 	local votingtime = TwitchIntegration.Config.VotingTime
+
+
 	for i=votingtime,1,-1 do
 		if TwitchIntegration.IsInGame() then
 
@@ -379,66 +375,41 @@ function TwitchIntegration.CountdownVote()
 	thread(TwitchIntegration.TimeBetweenVote)
 end
 
-function TwitchIntegration.TwitchConnect() -- Here we start the twitch integration on a thread
-	client = socket.tcp()
-	host = "irc.chat.twitch.tv"
-	nick = "justinfan1893"
+function TwitchIntegration.ReceiveNewMessage(resp)
+	if string.find(resp,"PRIVMSG") and voting == 1 then -- If we are accepting votes and a twitch message comes in
+		local a,b = string.find(resp,"PRIVMSG #" .. TwitchIntegration.Config.Username .. " :",1,true)
+		local incmessage = string.sub(resp,b+1)
 
-	--Connect. Please connect.
-	isconnected = client:connect(host, 6667)
-	client:settimeout(0, t)
+		local startindex = string.find(resp,':')
+		local endindex = string.find(resp,'!')
+		local sender = string.sub(resp,startindex + 1, endindex-1)
 
-	--If we fail a connection
-	if isconnected ~= 1 then
-		client:close()
-		isconnected = 0
-	end
-
-	client:send("NICK " .. nick .. "\r\n")
-
-	local resp, err = nil
-	while err == nil do --This is the main loop for recieving data
-		resp, err = client:receive()
-		if resp ~= nil then
-			if string.find(resp,"PRIVMSG") and voting == 1 then -- If we are accepting votes and a twitch message comes in
-				local a,b = string.find(resp,"PRIVMSG #" .. TwitchIntegration.Config.Username .. " :",1,true)
-				local incmessage = string.sub(resp,b+1)
-
-				local startindex = string.find(resp,':')
-				local endindex = string.find(resp,'!')
-				local sender = string.sub(resp,startindex + 1, endindex-1)
-
-				--If sender has not already made a vote
-				if not TwitchIntegration.IsInArray(voters,sender) then
-					for i=1,TwitchIntegration.Config.OfferedChoices do
-						if incmessage:find("^" .. i) ~= nil then -- If a 1 (or x emote in future) was found at BEGINNING
-							votes[i] = votes[i] + 1
-							table.insert(voters,sender)
-							break
-						end
+		--If sender has not already made a vote
+		if not TwitchIntegration.IsInArray(voters,sender) then
+			for i=1,TwitchIntegration.Config.OfferedChoices do
+				if incmessage:find("^" .. i) ~= nil then -- If a 1 (or x emote in future) was found at BEGINNING
+					votes[i] = votes[i] + 1
+					if TwitchIntegration.Config.SendConfirmMessage then
+						print("TwitchSocket:SendMessage:Thanks for the vote " .. sender)
 					end
+					table.insert(voters,sender)
+					break
 				end
-
-				--This needs more filtering, we have the message but now we need to extract the first number that is 1-4
-			elseif string.find(resp,"tmi.twitch.tv 376") then -- We got the Hello Message... Join a channel
-				client:send("JOIN #" .. TwitchIntegration.Config.Username .."\r\n")
-			elseif string.find(resp, "tmi.twitch.tv JOIN") then -- We finished joining a channel.
-				channeljoined = 1
-				thread(TwitchIntegration.TimeBetweenVote)
-			elseif string.find(resp,"PING :tmi.twitch.tv") then -- We reveived a PING, reply back with PONG!
-				client:send("PONG :tmi.twitch.tv\r\n")
 			end
 		end
 
-		if err == 'timeout' then -- We expect timeouts because receive will timeout while waiting for incomming messages. This allows it to be non blocking.
-			err = nil
-		end
-		wait(1)
+		--This needs more filtering, we have the message but now we need to extract the first number that is 1-4
+	elseif string.find(resp, "tmi.twitch.tv JOIN") then -- We finished joining a channel.
+		thread(TwitchIntegration.TimeBetweenVote)
+		isconnected = 1
+		thread(function()
+			wait(TwitchIntegration.Config.TimeBetweenVotes)
+			isconnected = 0
+		end)
 	end
-	client:close()
-	isconnected = 0
-	channeljoined = 0
 end
+
+StyxScribe.AddHook(TwitchIntegration.ReceiveNewMessage, "TwitchIntegration:NewMessage:", TwitchIntegration)
 
 function TwitchIntegration.LoadTrigger(triggerArgs)
 	if triggerArgs ~= nil and triggerArgs.name ~= nil then
@@ -449,9 +420,22 @@ function TwitchIntegration.LoadTrigger(triggerArgs)
 
 	if isconnected == 0 and CurrentRun ~= nil then
 		if CurrentRun.CurrentRoom ~= nil then
-			thread(TwitchIntegration.TwitchConnect)
+			--close the socket so we dont accidentally start it over again
+			print("TwitchSocket:Stop")
+			--start the socket
+			print("TwitchSocket:SetUsername:" .. TwitchIntegration.Config.Username)
+			print("TwitchSocket:SetChannel:#" .. TwitchIntegration.Config.Username)
+			print("TwitchSocket:SetToken:" .. TwitchIntegration.Config.OAuth)
+			print("TwitchSocket:Start")
+
 		end
 	end
 end
 
-OnAnyLoad{TwitchIntegration.LoadTrigger}
+OnAnyLoad{function() 
+	print(GetMapName({}))
+	if not string.find(GetMapName({}), "DeathArea") and GetMapName({}) ~= "RoomPreRun" then
+		print("Load")
+		TwitchIntegration.LoadTrigger()
+	end
+end}
